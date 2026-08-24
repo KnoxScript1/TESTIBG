@@ -1,0 +1,1005 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+--==================================================
+-- KNOX SCRIPT LOADING UI
+--==================================================
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "KnoxLoadingUI"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+gui.Parent = player:WaitForChild("PlayerGui")
+
+--==================================================
+-- BACKGROUND
+--==================================================
+
+local background = Instance.new("Frame")
+background.Size = UDim2.fromScale(1, 1)
+background.BackgroundColor3 = Color3.fromRGB(7, 7, 12)
+background.BorderSizePixel = 0
+background.Parent = gui
+
+local bgGradient = Instance.new("UIGradient")
+bgGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(7, 7, 15)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(18, 10, 32)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 25))
+})
+bgGradient.Parent = background
+
+task.spawn(function()
+	while gui.Parent do
+		local tween = TweenService:Create(
+			bgGradient,
+			TweenInfo.new(5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+			{Rotation = 180}
+		)
+
+		tween:Play()
+		tween.Completed:Wait()
+		bgGradient.Rotation = 0
+	end
+end)
+
+--==================================================
+-- SOUNDS
+--==================================================
+
+local function createSound(name, soundId, volume)
+	local sound = Instance.new("Sound")
+	sound.Name = name
+	sound.SoundId = soundId
+	sound.Volume = volume
+	sound.Parent = gui
+	return sound
+end
+
+local loadingSound = createSound(
+	"LoadingSound",
+	"rbxassetid://YOUR_LOADING_SOUND_ID",
+	0.20
+)
+
+local tickSound = createSound(
+	"ProgressTick",
+	"rbxassetid://YOUR_TICK_SOUND_ID",
+	0.18
+)
+
+local completeSound = createSound(
+	"CompleteSound",
+	"rbxassetid://YOUR_COMPLETE_SOUND_ID",
+	0.40
+)
+
+-- YOUR SOUND
+local clickSound = createSound(
+	"ClickSound",
+	"rbxassetid://133125955227476",
+	0.60
+)
+
+-- SAME SOUND FOR VERIFIED
+local verifiedSound = createSound(
+	"VerifiedSound",
+	"rbxassetid://133125955227476",
+	0.70
+)
+
+--==================================================
+-- BOTTOM RIGHT KNOX IMAGE LOGO
+--==================================================
+
+local cornerLogo = Instance.new("ImageLabel")
+cornerLogo.Name = "KnoxCornerLogo"
+cornerLogo.Size = UDim2.fromOffset(120, 120)
+cornerLogo.Position = UDim2.new(1, -145, 1, -145)
+cornerLogo.AnchorPoint = Vector2.new(0, 0)
+cornerLogo.BackgroundTransparency = 1
+cornerLogo.Image = "rbxassetid://72500839813057"
+cornerLogo.ScaleType = Enum.ScaleType.Fit
+cornerLogo.ImageTransparency = 0
+cornerLogo.ZIndex = 100
+cornerLogo.Parent = gui
+
+--==================================================
+-- LOGO GLOW
+--==================================================
+
+local logoGlow = Instance.new("ImageLabel")
+logoGlow.Name = "KnoxLogoGlow"
+logoGlow.Size = UDim2.fromOffset(140, 140)
+logoGlow.Position = UDim2.new(1, -155, 1, -155)
+logoGlow.BackgroundTransparency = 1
+logoGlow.Image = "rbxassetid://72500839813057"
+logoGlow.ImageTransparency = 0.82
+logoGlow.ImageColor3 = Color3.fromRGB(150, 80, 255)
+logoGlow.ZIndex = 99
+logoGlow.Parent = gui
+
+--==================================================
+-- JELLY LOGO ANIMATION
+--==================================================
+
+task.spawn(function()
+
+	while gui.Parent do
+
+		-- Stretch upward
+		local stretch = TweenService:Create(
+			cornerLogo,
+			TweenInfo.new(
+				0.45,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(128, 108),
+				Position = UDim2.new(1, -149, 1, -139)
+			}
+		)
+
+		local glowStretch = TweenService:Create(
+			logoGlow,
+			TweenInfo.new(
+				0.45,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(148, 128),
+				Position = UDim2.new(1, -159, 1, -149),
+				ImageTransparency = 0.88
+			}
+		)
+
+		stretch:Play()
+		glowStretch:Play()
+
+		stretch.Completed:Wait()
+
+		-- Squash down
+		local squash = TweenService:Create(
+			cornerLogo,
+			TweenInfo.new(
+				0.45,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(108, 128),
+				Position = UDim2.new(1, -139, 1, -149)
+			}
+		)
+
+		local glowSquash = TweenService:Create(
+			logoGlow,
+			TweenInfo.new(
+				0.45,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(128, 148),
+				Position = UDim2.new(1, -149, 1, -159),
+				ImageTransparency = 0.78
+			}
+		)
+
+		squash:Play()
+		glowSquash:Play()
+
+		squash.Completed:Wait()
+
+		-- Return to normal
+		local normal = TweenService:Create(
+			cornerLogo,
+			TweenInfo.new(
+				0.5,
+				Enum.EasingStyle.Elastic,
+				Enum.EasingDirection.Out
+			),
+			{
+				Size = UDim2.fromOffset(120, 120),
+				Position = UDim2.new(1, -145, 1, -145)
+			}
+		)
+
+		local glowNormal = TweenService:Create(
+			logoGlow,
+			TweenInfo.new(
+				0.5,
+				Enum.EasingStyle.Elastic,
+				Enum.EasingDirection.Out
+			),
+			{
+				Size = UDim2.fromOffset(140, 140),
+				Position = UDim2.new(1, -155, 1, -155),
+				ImageTransparency = 0.82
+			}
+		)
+
+		normal:Play()
+		glowNormal:Play()
+
+		normal.Completed:Wait()
+
+		task.wait(0.25)
+	end
+
+end)
+
+--==================================================
+-- PLAYER PROFILE
+--==================================================
+
+local profile = Instance.new("Frame")
+profile.Size = UDim2.fromScale(0.25, 0.19)
+profile.Position = UDim2.fromScale(0.72, 0.045)
+profile.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
+profile.BackgroundTransparency = 0.08
+profile.BorderSizePixel = 0
+profile.Parent = background
+
+local profileCorner = Instance.new("UICorner")
+profileCorner.CornerRadius = UDim.new(0, 14)
+profileCorner.Parent = profile
+
+local profileStroke = Instance.new("UIStroke")
+profileStroke.Color = Color3.fromRGB(140, 80, 255)
+profileStroke.Thickness = 1.5
+profileStroke.Transparency = 0.25
+profileStroke.Parent = profile
+
+--==================================================
+-- AVATAR
+--==================================================
+
+local avatar = Instance.new("ImageLabel")
+avatar.Size = UDim2.fromScale(0.30, 0.55)
+avatar.Position = UDim2.fromScale(0.06, 0.10)
+avatar.BackgroundTransparency = 1
+avatar.Parent = profile
+
+local avatarCorner = Instance.new("UICorner")
+avatarCorner.CornerRadius = UDim.new(1, 0)
+avatarCorner.Parent = avatar
+
+local success, image = pcall(function()
+	return Players:GetUserThumbnailAsync(
+		player.UserId,
+		Enum.ThumbnailType.HeadShot,
+		Enum.ThumbnailSize.Size150x150
+	)
+end)
+
+if success then
+	avatar.Image = image
+end
+
+--==================================================
+-- AVATAR FLOATING ANIMATION
+--==================================================
+
+local originalAvatarPosition = avatar.Position
+
+task.spawn(function()
+	while gui.Parent do
+
+		local up = TweenService:Create(
+			avatar,
+			TweenInfo.new(
+				1.2,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Position = originalAvatarPosition + UDim2.fromOffset(0, -5)
+			}
+		)
+
+		up:Play()
+		up.Completed:Wait()
+
+		local down = TweenService:Create(
+			avatar,
+			TweenInfo.new(
+				1.2,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Position = originalAvatarPosition + UDim2.fromOffset(0, 5)
+			}
+		)
+
+		down:Play()
+		down.Completed:Wait()
+	end
+end)
+
+--==================================================
+-- USERNAME
+--==================================================
+
+local username = Instance.new("TextLabel")
+username.Size = UDim2.fromScale(0.58, 0.20)
+username.Position = UDim2.fromScale(0.38, 0.08)
+username.BackgroundTransparency = 1
+username.Text = "@" .. player.Name
+username.TextColor3 = Color3.fromRGB(255, 255, 255)
+username.TextScaled = true
+username.Font = Enum.Font.GothamBold
+username.TextXAlignment = Enum.TextXAlignment.Left
+username.Parent = profile
+
+--==================================================
+-- DISPLAY NAME
+--==================================================
+
+local displayName = Instance.new("TextLabel")
+displayName.Size = UDim2.fromScale(0.58, 0.18)
+displayName.Position = UDim2.fromScale(0.38, 0.28)
+displayName.BackgroundTransparency = 1
+displayName.Text = player.DisplayName
+displayName.TextColor3 = Color3.fromRGB(165, 165, 185)
+displayName.TextScaled = true
+displayName.Font = Enum.Font.Gotham
+displayName.TextXAlignment = Enum.TextXAlignment.Left
+displayName.Parent = profile
+
+--==================================================
+-- USER ID
+--==================================================
+
+local userId = Instance.new("TextLabel")
+userId.Size = UDim2.fromScale(0.58, 0.16)
+userId.Position = UDim2.fromScale(0.38, 0.46)
+userId.BackgroundTransparency = 1
+userId.Text = "User ID: " .. tostring(player.UserId)
+userId.TextColor3 = Color3.fromRGB(115, 115, 135)
+userId.TextScaled = true
+userId.Font = Enum.Font.Gotham
+userId.TextXAlignment = Enum.TextXAlignment.Left
+userId.Parent = profile
+
+--==================================================
+-- PLAYER STATUS
+--==================================================
+
+local playerStatus = Instance.new("TextLabel")
+playerStatus.Size = UDim2.fromScale(0.85, 0.18)
+playerStatus.Position = UDim2.fromScale(0.08, 0.67)
+playerStatus.BackgroundTransparency = 1
+playerStatus.Text = "●  PLAYER CONNECTED"
+playerStatus.TextColor3 = Color3.fromRGB(90, 220, 150)
+playerStatus.TextScaled = true
+playerStatus.Font = Enum.Font.GothamMedium
+playerStatus.TextXAlignment = Enum.TextXAlignment.Left
+playerStatus.Parent = profile
+
+--==================================================
+-- KNOX TEXT LOGO
+--==================================================
+
+local logo = Instance.new("TextLabel")
+logo.Size = UDim2.fromScale(0.18, 0.12)
+logo.Position = UDim2.fromScale(0.41, 0.16)
+logo.BackgroundTransparency = 1
+logo.Text = "K"
+logo.TextColor3 = Color3.fromRGB(180, 90, 255)
+logo.TextScaled = true
+logo.Font = Enum.Font.GothamBlack
+logo.Parent = background
+
+local logoStroke = Instance.new("UIStroke")
+logoStroke.Color = Color3.fromRGB(80, 150, 255)
+logoStroke.Thickness = 2
+logoStroke.Transparency = 0.3
+logoStroke.Parent = logo
+
+local textLogoGlow = Instance.new("TextLabel")
+textLogoGlow.Size = logo.Size
+textLogoGlow.Position = logo.Position
+textLogoGlow.BackgroundTransparency = 1
+textLogoGlow.Text = "K"
+textLogoGlow.TextColor3 = Color3.fromRGB(120, 70, 255)
+textLogoGlow.TextTransparency = 0.7
+textLogoGlow.TextScaled = true
+textLogoGlow.Font = Enum.Font.GothamBlack
+textLogoGlow.ZIndex = 0
+textLogoGlow.Parent = background
+
+--==================================================
+-- TITLE
+--==================================================
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.fromScale(0.8, 0.09)
+title.Position = UDim2.fromScale(0.1, 0.30)
+title.BackgroundTransparency = 1
+title.Text = "KNOX SCRIPT"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBlack
+title.Parent = background
+
+local titleStroke = Instance.new("UIStroke")
+titleStroke.Color = Color3.fromRGB(130, 80, 255)
+titleStroke.Thickness = 1.5
+titleStroke.Transparency = 0.4
+titleStroke.Parent = title
+
+--==================================================
+-- SUBTITLE
+--==================================================
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.fromScale(0.7, 0.05)
+subtitle.Position = UDim2.fromScale(0.15, 0.395)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "Knox Script Loading Script"
+subtitle.TextColor3 = Color3.fromRGB(175, 175, 190)
+subtitle.TextScaled = true
+subtitle.Font = Enum.Font.Gotham
+subtitle.Parent = background
+
+--==================================================
+-- VERSION
+--==================================================
+
+local version = Instance.new("TextLabel")
+version.Size = UDim2.fromScale(0.4, 0.035)
+version.Position = UDim2.fromScale(0.3, 0.445)
+version.BackgroundTransparency = 1
+version.Text = "KNOX SCRIPT • v1.0"
+version.TextColor3 = Color3.fromRGB(110, 110, 130)
+version.TextScaled = true
+version.Font = Enum.Font.GothamMedium
+version.Parent = background
+
+--==================================================
+-- STATUS
+--==================================================
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.fromScale(0.6, 0.04)
+status.Position = UDim2.fromScale(0.2, 0.51)
+status.BackgroundTransparency = 1
+status.Text = "Initializing..."
+status.TextColor3 = Color3.fromRGB(190, 190, 210)
+status.TextScaled = true
+status.Font = Enum.Font.Gotham
+status.Parent = background
+
+--==================================================
+-- PERCENTAGE
+--==================================================
+
+local percent = Instance.new("TextLabel")
+percent.Size = UDim2.fromScale(0.6, 0.06)
+percent.Position = UDim2.fromScale(0.2, 0.55)
+percent.BackgroundTransparency = 1
+percent.Text = "0%"
+percent.TextColor3 = Color3.fromRGB(255, 255, 255)
+percent.TextScaled = true
+percent.Font = Enum.Font.GothamBold
+percent.Parent = background
+
+--==================================================
+-- PROGRESS BAR
+--==================================================
+
+local barBackground = Instance.new("Frame")
+barBackground.Size = UDim2.fromScale(0.6, 0.025)
+barBackground.Position = UDim2.fromScale(0.2, 0.63)
+barBackground.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+barBackground.BorderSizePixel = 0
+barBackground.Parent = background
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(1, 0)
+barCorner.Parent = barBackground
+
+local bar = Instance.new("Frame")
+bar.Size = UDim2.fromScale(0, 1)
+bar.BackgroundColor3 = Color3.fromRGB(160, 80, 255)
+bar.BorderSizePixel = 0
+bar.Parent = barBackground
+
+local barCorner2 = Instance.new("UICorner")
+barCorner2.CornerRadius = UDim.new(1, 0)
+barCorner2.Parent = bar
+
+local barGradient = Instance.new("UIGradient")
+barGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 70, 255)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(120, 100, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 160, 255))
+})
+barGradient.Parent = bar
+
+--==================================================
+-- BAR SHIMMER
+--==================================================
+
+local shimmer = Instance.new("Frame")
+shimmer.Size = UDim2.fromScale(0.12, 2)
+shimmer.Position = UDim2.fromScale(-0.2, -0.5)
+shimmer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+shimmer.BackgroundTransparency = 0.45
+shimmer.BorderSizePixel = 0
+shimmer.Rotation = 15
+shimmer.Parent = bar
+
+task.spawn(function()
+	while gui.Parent do
+
+		shimmer.Position = UDim2.fromScale(-0.2, -0.5)
+
+		local tween = TweenService:Create(
+			shimmer,
+			TweenInfo.new(1.2, Enum.EasingStyle.Linear),
+			{
+				Position = UDim2.fromScale(1.1, -0.5)
+			}
+		)
+
+		tween:Play()
+		tween.Completed:Wait()
+
+		task.wait(0.2)
+	end
+end)
+
+--==================================================
+-- PARTICLES
+--==================================================
+
+local particleColors = {
+	Color3.fromRGB(180, 70, 255),
+	Color3.fromRGB(255, 255, 255),
+	Color3.fromRGB(60, 150, 255)
+}
+
+for i = 1, 35 do
+
+	local particle = Instance.new("Frame")
+	local size = math.random(2, 5)
+
+	particle.Size = UDim2.fromOffset(size, size)
+
+	particle.Position = UDim2.fromScale(
+		math.random(),
+		math.random()
+	)
+
+	particle.BackgroundColor3 =
+		particleColors[math.random(1, #particleColors)]
+
+	particle.BackgroundTransparency =
+		math.random(45, 85) / 100
+
+	particle.BorderSizePixel = 0
+	particle.Parent = background
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = particle
+
+	task.spawn(function()
+
+		while gui.Parent do
+
+			local tween = TweenService:Create(
+				particle,
+				TweenInfo.new(
+					math.random(3, 7),
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				),
+				{
+					Position = UDim2.fromScale(
+						math.random(),
+						math.random()
+					),
+
+					BackgroundTransparency =
+						math.random(55, 90) / 100
+				}
+			)
+
+			tween:Play()
+			tween.Completed:Wait()
+		end
+	end)
+end
+
+--==================================================
+-- TEXT LOGO GLOW
+--==================================================
+
+task.spawn(function()
+
+	while gui.Parent do
+
+		TweenService:Create(
+			logo,
+			TweenInfo.new(
+				1,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				TextTransparency = 0.25
+			}
+		):Play()
+
+		TweenService:Create(
+			textLogoGlow,
+			TweenInfo.new(
+				1,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				TextTransparency = 0.4
+			}
+		):Play()
+
+		task.wait(1)
+
+		TweenService:Create(
+			logo,
+			TweenInfo.new(
+				1,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				TextTransparency = 0
+			}
+		):Play()
+
+		TweenService:Create(
+			textLogoGlow,
+			TweenInfo.new(
+				1,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				TextTransparency = 0.7
+			}
+		):Play()
+
+		task.wait(1)
+	end
+end)
+
+--==================================================
+-- LOADING STATUS TEXT
+--==================================================
+
+local statuses = {
+	"Initializing...",
+	"Loading modules...",
+	"Preparing UI...",
+	"Connecting...",
+	"Optimizing...",
+	"Almost ready..."
+}
+
+task.spawn(function()
+
+	local index = 1
+
+	while gui.Parent do
+
+		status.Text = statuses[index]
+
+		index += 1
+
+		if index > #statuses then
+			index = 1
+		end
+
+		task.wait(1.8)
+	end
+end)
+
+--==================================================
+-- START LOADING SOUND
+--==================================================
+
+pcall(function()
+
+	loadingSound.Looped = true
+	loadingSound:Play()
+
+end)
+
+--==================================================
+-- 1% → 70%
+--==================================================
+
+for i = 1, 70 do
+
+	percent.Text = i .. "%"
+
+	TweenService:Create(
+		bar,
+		TweenInfo.new(
+			0.045,
+			Enum.EasingStyle.Linear
+		),
+		{
+			Size = UDim2.fromScale(i / 100, 1)
+		}
+	):Play()
+
+	if i == 25 or i == 50 then
+
+		pcall(function()
+			tickSound:Play()
+		end)
+
+	end
+
+	task.wait(0.045)
+end
+
+--==================================================
+-- 71% → 74%
+--==================================================
+
+for i = 71, 74 do
+
+	percent.Text = i .. "%"
+
+	TweenService:Create(
+		bar,
+		TweenInfo.new(
+			0.12,
+			Enum.EasingStyle.Linear
+		),
+		{
+			Size = UDim2.fromScale(i / 100, 1)
+		}
+	):Play()
+
+	task.wait(0.12)
+end
+
+--==================================================
+-- 75% → 100%
+--==================================================
+
+for i = 75, 100 do
+
+	percent.Text = i .. "%"
+
+	TweenService:Create(
+		bar,
+		TweenInfo.new(
+			0.35,
+			Enum.EasingStyle.Linear
+		),
+		{
+			Size = UDim2.fromScale(i / 100, 1)
+		}
+	):Play()
+
+	if i == 75 then
+
+		pcall(function()
+			tickSound:Play()
+		end)
+
+	end
+
+	task.wait(0.35)
+end
+
+--==================================================
+-- LOADING COMPLETE
+--==================================================
+
+percent.Text = "100%"
+status.Text = "Ready!"
+
+pcall(function()
+
+	loadingSound:Stop()
+	completeSound:Play()
+
+end)
+
+task.wait(0.8)
+
+--==================================================
+-- VERIFICATION SCREEN
+--==================================================
+
+for _, object in ipairs(background:GetChildren()) do
+
+	if object ~= bgGradient then
+
+		if object:IsA("TextLabel")
+			or object:IsA("Frame")
+			or object:IsA("ImageLabel") then
+
+			object.Visible = false
+		end
+	end
+end
+
+local verifyFrame = Instance.new("Frame")
+verifyFrame.Size = UDim2.fromScale(0.38, 0.32)
+verifyFrame.Position = UDim2.fromScale(0.31, 0.34)
+verifyFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
+verifyFrame.BorderSizePixel = 0
+verifyFrame.Parent = background
+
+local verifyCorner = Instance.new("UICorner")
+verifyCorner.CornerRadius = UDim.new(0, 16)
+verifyCorner.Parent = verifyFrame
+
+local verifyStroke = Instance.new("UIStroke")
+verifyStroke.Color = Color3.fromRGB(140, 80, 255)
+verifyStroke.Thickness = 1.5
+verifyStroke.Parent = verifyFrame
+
+local verifyTitle = Instance.new("TextLabel")
+verifyTitle.Size = UDim2.fromScale(0.9, 0.2)
+verifyTitle.Position = UDim2.fromScale(0.05, 0.08)
+verifyTitle.BackgroundTransparency = 1
+verifyTitle.Text = "Verification"
+verifyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+verifyTitle.TextScaled = true
+verifyTitle.Font = Enum.Font.GothamBold
+verifyTitle.Parent = verifyFrame
+
+local verifyText = Instance.new("TextLabel")
+verifyText.Size = UDim2.fromScale(0.85, 0.2)
+verifyText.Position = UDim2.fromScale(0.075, 0.30)
+verifyText.BackgroundTransparency = 1
+verifyText.Text = "Please confirm that you are human."
+verifyText.TextColor3 = Color3.fromRGB(175, 175, 190)
+verifyText.TextScaled = true
+verifyText.Font = Enum.Font.Gotham
+verifyText.Parent = verifyFrame
+
+local humanButton = Instance.new("TextButton")
+humanButton.Size = UDim2.fromScale(0.7, 0.22)
+humanButton.Position = UDim2.fromScale(0.15, 0.62)
+humanButton.BackgroundColor3 = Color3.fromRGB(130, 70, 255)
+humanButton.BorderSizePixel = 0
+humanButton.Text = "I'M HUMAN"
+humanButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+humanButton.TextScaled = true
+humanButton.Font = Enum.Font.GothamBold
+humanButton.AutoButtonColor = false
+humanButton.Parent = verifyFrame
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 10)
+buttonCorner.Parent = humanButton
+
+--==================================================
+-- BUTTON HOVER
+--==================================================
+
+humanButton.MouseEnter:Connect(function()
+
+	TweenService:Create(
+		humanButton,
+		TweenInfo.new(0.2),
+		{
+			BackgroundColor3 = Color3.fromRGB(165, 100, 255)
+		}
+	):Play()
+
+end)
+
+humanButton.MouseLeave:Connect(function()
+
+	TweenService:Create(
+		humanButton,
+		TweenInfo.new(0.2),
+		{
+			BackgroundColor3 = Color3.fromRGB(130, 70, 255)
+		}
+	):Play()
+
+end)
+
+--==================================================
+-- VERIFICATION
+--==================================================
+
+humanButton.MouseButton1Click:Connect(function()
+
+	-- PLAY CLICK SOUND
+	pcall(function()
+
+		clickSound.TimePosition = 0
+		clickSound:Play()
+
+	end)
+
+	humanButton.Active = false
+	humanButton.Text = "VERIFYING..."
+
+	task.wait(1.2)
+
+	humanButton.Text = "✓ VERIFIED"
+	humanButton.BackgroundColor3 =
+		Color3.fromRGB(70, 190, 120)
+
+	verifyText.Text = "Verification successful!"
+	verifyText.TextColor3 =
+		Color3.fromRGB(100, 220, 150)
+
+	-- PLAY VERIFIED SOUND
+	pcall(function()
+
+		verifiedSound.TimePosition = 0
+		verifiedSound:Play()
+
+	end)
+
+	task.wait(1)
+
+	--==================================================
+	-- FADE OUT
+	--==================================================
+
+	local fadeInfo = TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Quad,
+		Enum.EasingDirection.Out
+	)
+
+	for _, object in ipairs(verifyFrame:GetDescendants()) do
+
+		if object:IsA("TextLabel")
+			or object:IsA("TextButton") then
+
+			TweenService:Create(
+				object,
+				fadeInfo,
+				{
+					TextTransparency = 1
+				}
+			):Play()
+
+		elseif object:IsA("UIStroke") then
+
+			TweenService:Create(
+				object,
+				fadeInfo,
+				{
+					Transparency = 1
+				}
+			):Play()
+		end
+	end
+
+	TweenService:Create(
+		verifyFrame,
+		fadeInfo,
+		{
+			BackgroundTransparency = 1
+		}
+	):Play()
+
+	task.wait(0.9)
+
+	gui:Destroy()
+end)
