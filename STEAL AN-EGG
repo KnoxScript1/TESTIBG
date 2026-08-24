@@ -1,0 +1,1108 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+--==================================================
+-- SETTINGS
+--==================================================
+
+local LOGO_ASSET = "rbxassetid://72500839813057"
+local VERIFY_SOUND_ASSET = "rbxassetid://133125955227476"
+
+--==================================================
+-- KNOX LOADING UI
+--==================================================
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "KnoxLoadingUI"
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+gui.Parent = player:WaitForChild("PlayerGui")
+
+--==================================================
+-- BACKGROUND
+--==================================================
+
+local background = Instance.new("Frame")
+background.Size = UDim2.fromScale(1, 1)
+background.BackgroundColor3 = Color3.fromRGB(5, 5, 12)
+background.BorderSizePixel = 0
+background.Parent = gui
+
+local bgGradient = Instance.new("UIGradient")
+bgGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(5, 5, 15)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 7, 38)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 28))
+})
+bgGradient.Parent = background
+
+task.spawn(function()
+	while gui.Parent do
+		local tween = TweenService:Create(
+			bgGradient,
+			TweenInfo.new(5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+			{Rotation = 180}
+		)
+		tween:Play()
+		tween.Completed:Wait()
+		bgGradient.Rotation = 0
+	end
+end)
+
+--==================================================
+-- SOUNDS
+--==================================================
+
+local function createSound(name, soundId, volume)
+	local sound = Instance.new("Sound")
+	sound.Name = name
+	sound.SoundId = soundId
+	sound.Volume = volume
+	sound.Parent = gui
+	return sound
+end
+
+-- Replace these three if you have their IDs
+local loadingSound = createSound(
+	"LoadingSound",
+	"rbxassetid://YOUR_LOADING_SOUND_ID",
+	0.20
+)
+
+local tickSound = createSound(
+	"ProgressTick",
+	"rbxassetid://YOUR_TICK_SOUND_ID",
+	0.18
+)
+
+local completeSound = createSound(
+	"CompleteSound",
+	"rbxassetid://YOUR_COMPLETE_SOUND_ID",
+	0.40
+)
+
+-- Your supplied sound
+local clickSound = createSound(
+	"ClickSound",
+	VERIFY_SOUND_ASSET,
+	0.40
+)
+
+local verifiedSound = createSound(
+	"VerifiedSound",
+	VERIFY_SOUND_ASSET,
+	0.45
+)
+
+--==================================================
+-- PLAYER PROFILE
+--==================================================
+
+local profile = Instance.new("Frame")
+profile.Size = UDim2.fromScale(0.25, 0.19)
+profile.Position = UDim2.fromScale(0.72, 0.045)
+profile.BackgroundColor3 = Color3.fromRGB(16, 14, 27)
+profile.BackgroundTransparency = 0.08
+profile.BorderSizePixel = 0
+profile.Parent = background
+
+local profileCorner = Instance.new("UICorner")
+profileCorner.CornerRadius = UDim.new(0, 14)
+profileCorner.Parent = profile
+
+local profileStroke = Instance.new("UIStroke")
+profileStroke.Color = Color3.fromRGB(120, 70, 240)
+profileStroke.Thickness = 1.5
+profileStroke.Transparency = 0.2
+profileStroke.Parent = profile
+
+--==================================================
+-- AVATAR
+--==================================================
+
+local avatar = Instance.new("ImageLabel")
+avatar.Size = UDim2.fromScale(0.30, 0.55)
+avatar.Position = UDim2.fromScale(0.06, 0.10)
+avatar.BackgroundTransparency = 1
+avatar.Parent = profile
+
+local avatarCorner = Instance.new("UICorner")
+avatarCorner.CornerRadius = UDim.new(1, 0)
+avatarCorner.Parent = avatar
+
+local success, image = pcall(function()
+	return Players:GetUserThumbnailAsync(
+		player.UserId,
+		Enum.ThumbnailType.HeadShot,
+		Enum.ThumbnailSize.Size150x150
+	)
+end)
+
+if success then
+	avatar.Image = image
+end
+
+local originalAvatarPosition = avatar.Position
+
+task.spawn(function()
+	while gui.Parent do
+		local up = TweenService:Create(
+			avatar,
+			TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+			{
+				Position = originalAvatarPosition + UDim2.fromOffset(0, -5)
+			}
+		)
+
+		up:Play()
+		up.Completed:Wait()
+
+		local down = TweenService:Create(
+			avatar,
+			TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+			{
+				Position = originalAvatarPosition + UDim2.fromOffset(0, 5)
+			}
+		)
+
+		down:Play()
+		down.Completed:Wait()
+	end
+end)
+
+--==================================================
+-- PROFILE TEXT
+--==================================================
+
+local username = Instance.new("TextLabel")
+username.Size = UDim2.fromScale(0.58, 0.20)
+username.Position = UDim2.fromScale(0.38, 0.08)
+username.BackgroundTransparency = 1
+username.Text = "@" .. player.Name
+username.TextColor3 = Color3.fromRGB(255,255,255)
+username.TextScaled = true
+username.Font = Enum.Font.GothamBold
+username.TextXAlignment = Enum.TextXAlignment.Left
+username.Parent = profile
+
+local displayName = Instance.new("TextLabel")
+displayName.Size = UDim2.fromScale(0.58, 0.18)
+displayName.Position = UDim2.fromScale(0.38, 0.28)
+displayName.BackgroundTransparency = 1
+displayName.Text = player.DisplayName
+displayName.TextColor3 = Color3.fromRGB(165,165,185)
+displayName.TextScaled = true
+displayName.Font = Enum.Font.Gotham
+displayName.TextXAlignment = Enum.TextXAlignment.Left
+displayName.Parent = profile
+
+local userId = Instance.new("TextLabel")
+userId.Size = UDim2.fromScale(0.58, 0.16)
+userId.Position = UDim2.fromScale(0.38, 0.46)
+userId.BackgroundTransparency = 1
+userId.Text = "User ID: " .. tostring(player.UserId)
+userId.TextColor3 = Color3.fromRGB(115,115,135)
+userId.TextScaled = true
+userId.Font = Enum.Font.Gotham
+userId.TextXAlignment = Enum.TextXAlignment.Left
+userId.Parent = profile
+
+local playerStatus = Instance.new("TextLabel")
+playerStatus.Size = UDim2.fromScale(0.85, 0.18)
+playerStatus.Position = UDim2.fromScale(0.08, 0.67)
+playerStatus.BackgroundTransparency = 1
+playerStatus.Text = "●  PLAYER CONNECTED"
+playerStatus.TextColor3 = Color3.fromRGB(90,220,150)
+playerStatus.TextScaled = true
+playerStatus.Font = Enum.Font.GothamMedium
+playerStatus.TextXAlignment = Enum.TextXAlignment.Left
+playerStatus.Parent = profile
+
+--==================================================
+-- CENTER KNOX LOGO
+--==================================================
+
+local logo = Instance.new("TextLabel")
+logo.Size = UDim2.fromScale(0.18, 0.12)
+logo.Position = UDim2.fromScale(0.41, 0.16)
+logo.BackgroundTransparency = 1
+logo.Text = "K"
+logo.TextColor3 = Color3.fromRGB(180,90,255)
+logo.TextScaled = true
+logo.Font = Enum.Font.GothamBlack
+logo.Parent = background
+
+local logoStroke = Instance.new("UIStroke")
+logoStroke.Color = Color3.fromRGB(80,150,255)
+logoStroke.Thickness = 2
+logoStroke.Transparency = 0.3
+logoStroke.Parent = logo
+
+--==================================================
+-- BOTTOM RIGHT IMAGE LOGO
+--==================================================
+
+local cornerLogo = Instance.new("ImageLabel")
+cornerLogo.Name = "KnoxCornerLogo"
+cornerLogo.Size = UDim2.fromOffset(90, 90)
+cornerLogo.Position = UDim2.new(1, -110, 1, -110)
+cornerLogo.BackgroundTransparency = 1
+cornerLogo.Image = LOGO_ASSET
+cornerLogo.ScaleType = Enum.ScaleType.Fit
+cornerLogo.ZIndex = 20
+cornerLogo.Parent = background
+
+local cornerLogoAspect = Instance.new("UIAspectRatioConstraint")
+cornerLogoAspect.AspectRatio = 1
+cornerLogoAspect.Parent = cornerLogo
+
+-- Jelly animation
+task.spawn(function()
+	while gui.Parent do
+
+		local squash = TweenService:Create(
+			cornerLogo,
+			TweenInfo.new(
+				0.45,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(100, 82),
+				Rotation = -5
+			}
+		)
+
+		squash:Play()
+		squash.Completed:Wait()
+
+		local stretch = TweenService:Create(
+			cornerLogo,
+			TweenInfo.new(
+				0.45,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(82, 100),
+				Rotation = 5
+			}
+		)
+
+		stretch:Play()
+		stretch.Completed:Wait()
+
+		local normal = TweenService:Create(
+			cornerLogo,
+			TweenInfo.new(
+				0.35,
+				Enum.EasingStyle.Sine,
+				Enum.EasingDirection.InOut
+			),
+			{
+				Size = UDim2.fromOffset(90, 90),
+				Rotation = 0
+			}
+		)
+
+		normal:Play()
+		normal.Completed:Wait()
+
+	end
+end)
+
+--==================================================
+-- TITLE
+--==================================================
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.fromScale(0.8, 0.09)
+title.Position = UDim2.fromScale(0.1, 0.30)
+title.BackgroundTransparency = 1
+title.Text = "KNOX SCRIPT"
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBlack
+title.Parent = background
+
+local titleStroke = Instance.new("UIStroke")
+titleStroke.Color = Color3.fromRGB(130,80,255)
+titleStroke.Thickness = 1.5
+titleStroke.Transparency = 0.4
+titleStroke.Parent = title
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.fromScale(0.7, 0.05)
+subtitle.Position = UDim2.fromScale(0.15, 0.395)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "Knox Script Loading Script"
+subtitle.TextColor3 = Color3.fromRGB(175,175,190)
+subtitle.TextScaled = true
+subtitle.Font = Enum.Font.Gotham
+subtitle.Parent = background
+
+local version = Instance.new("TextLabel")
+version.Size = UDim2.fromScale(0.4, 0.035)
+version.Position = UDim2.fromScale(0.3, 0.445)
+version.BackgroundTransparency = 1
+version.Text = "KNOX SCRIPT • v1.0"
+version.TextColor3 = Color3.fromRGB(110,110,130)
+version.TextScaled = true
+version.Font = Enum.Font.GothamMedium
+version.Parent = background
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.fromScale(0.6, 0.04)
+status.Position = UDim2.fromScale(0.2, 0.51)
+status.BackgroundTransparency = 1
+status.Text = "Initializing..."
+status.TextColor3 = Color3.fromRGB(190,190,210)
+status.TextScaled = true
+status.Font = Enum.Font.Gotham
+status.Parent = background
+
+local percent = Instance.new("TextLabel")
+percent.Size = UDim2.fromScale(0.6, 0.06)
+percent.Position = UDim2.fromScale(0.2, 0.55)
+percent.BackgroundTransparency = 1
+percent.Text = "0%"
+percent.TextColor3 = Color3.fromRGB(255,255,255)
+percent.TextScaled = true
+percent.Font = Enum.Font.GothamBold
+percent.Parent = background
+
+--==================================================
+-- PROGRESS BAR
+--==================================================
+
+local barBackground = Instance.new("Frame")
+barBackground.Size = UDim2.fromScale(0.6, 0.025)
+barBackground.Position = UDim2.fromScale(0.2, 0.63)
+barBackground.BackgroundColor3 = Color3.fromRGB(35,35,45)
+barBackground.BorderSizePixel = 0
+barBackground.Parent = background
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(1,0)
+barCorner.Parent = barBackground
+
+local bar = Instance.new("Frame")
+bar.Size = UDim2.fromScale(0,1)
+bar.BackgroundColor3 = Color3.fromRGB(160,80,255)
+bar.BorderSizePixel = 0
+bar.Parent = barBackground
+
+local barCorner2 = Instance.new("UICorner")
+barCorner2.CornerRadius = UDim.new(1,0)
+barCorner2.Parent = bar
+
+local barGradient = Instance.new("UIGradient")
+barGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0,Color3.fromRGB(180,70,255)),
+	ColorSequenceKeypoint.new(0.5,Color3.fromRGB(120,100,255)),
+	ColorSequenceKeypoint.new(1,Color3.fromRGB(60,160,255))
+})
+barGradient.Parent = bar
+
+--==================================================
+-- PARTICLES
+--==================================================
+
+local particleColors = {
+	Color3.fromRGB(180,70,255),
+	Color3.fromRGB(255,255,255),
+	Color3.fromRGB(60,150,255)
+}
+
+for i = 1,35 do
+
+	local particle = Instance.new("Frame")
+	local size = math.random(2,5)
+
+	particle.Size = UDim2.fromOffset(size,size)
+	particle.Position = UDim2.fromScale(math.random(),math.random())
+	particle.BackgroundColor3 =
+		particleColors[math.random(1,#particleColors)]
+	particle.BackgroundTransparency = math.random(45,85)/100
+	particle.BorderSizePixel = 0
+	particle.Parent = background
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1,0)
+	corner.Parent = particle
+
+	task.spawn(function()
+		while gui.Parent do
+
+			local tween = TweenService:Create(
+				particle,
+				TweenInfo.new(
+					math.random(3,7),
+					Enum.EasingStyle.Sine,
+					Enum.EasingDirection.InOut
+				),
+				{
+					Position = UDim2.fromScale(math.random(),math.random()),
+					BackgroundTransparency = math.random(55,90)/100
+				}
+			)
+
+			tween:Play()
+			tween.Completed:Wait()
+
+		end
+	end)
+end
+
+--==================================================
+-- STATUS TEXT
+--==================================================
+
+local statuses = {
+	"Initializing...",
+	"Loading modules...",
+	"Preparing UI...",
+	"Connecting...",
+	"Optimizing...",
+	"Almost ready..."
+}
+
+task.spawn(function()
+
+	local index = 1
+
+	while gui.Parent do
+
+		status.Text = statuses[index]
+
+		index += 1
+
+		if index > #statuses then
+			index = 1
+		end
+
+		task.wait(1.8)
+
+	end
+
+end)
+
+--==================================================
+-- LOADING
+--==================================================
+
+pcall(function()
+	loadingSound.Looped = true
+	loadingSound:Play()
+end)
+
+for i = 1,70 do
+
+	percent.Text = i .. "%"
+
+	TweenService:Create(
+		bar,
+		TweenInfo.new(0.045,Enum.EasingStyle.Linear),
+		{
+			Size = UDim2.fromScale(i/100,1)
+		}
+	):Play()
+
+	if i == 25 or i == 50 then
+		pcall(function()
+			tickSound:Play()
+		end)
+	end
+
+	task.wait(0.045)
+end
+
+for i = 71,74 do
+
+	percent.Text = i .. "%"
+
+	TweenService:Create(
+		bar,
+		TweenInfo.new(0.12,Enum.EasingStyle.Linear),
+		{
+			Size = UDim2.fromScale(i/100,1)
+		}
+	):Play()
+
+	task.wait(0.12)
+end
+
+for i = 75,100 do
+
+	percent.Text = i .. "%"
+
+	TweenService:Create(
+		bar,
+		TweenInfo.new(0.35,Enum.EasingStyle.Linear),
+		{
+			Size = UDim2.fromScale(i/100,1)
+		}
+	):Play()
+
+	if i == 75 then
+		pcall(function()
+			tickSound:Play()
+		end)
+	end
+
+	task.wait(0.35)
+end
+
+percent.Text = "100%"
+status.Text = "Ready!"
+
+pcall(function()
+	loadingSound:Stop()
+	completeSound:Play()
+end)
+
+task.wait(0.8)
+
+--==================================================
+-- VERIFICATION SCREEN
+--==================================================
+
+for _,object in ipairs(background:GetChildren()) do
+
+	if object ~= bgGradient and object ~= cornerLogo then
+
+		if object:IsA("TextLabel")
+			or object:IsA("Frame")
+			or object:IsA("ImageLabel") then
+
+			object.Visible = false
+
+		end
+
+	end
+end
+
+local verifyFrame = Instance.new("Frame")
+verifyFrame.Size = UDim2.fromScale(0.38,0.32)
+verifyFrame.Position = UDim2.fromScale(0.31,0.34)
+verifyFrame.BackgroundColor3 = Color3.fromRGB(15,10,28)
+verifyFrame.BorderSizePixel = 0
+verifyFrame.Parent = background
+
+local verifyCorner = Instance.new("UICorner")
+verifyCorner.CornerRadius = UDim.new(0,16)
+verifyCorner.Parent = verifyFrame
+
+local verifyStroke = Instance.new("UIStroke")
+verifyStroke.Color = Color3.fromRGB(140,80,255)
+verifyStroke.Thickness = 1.5
+verifyStroke.Parent = verifyFrame
+
+local verifyTitle = Instance.new("TextLabel")
+verifyTitle.Size = UDim2.fromScale(0.9,0.2)
+verifyTitle.Position = UDim2.fromScale(0.05,0.08)
+verifyTitle.BackgroundTransparency = 1
+verifyTitle.Text = "Verification"
+verifyTitle.TextColor3 = Color3.fromRGB(255,255,255)
+verifyTitle.TextScaled = true
+verifyTitle.Font = Enum.Font.GothamBold
+verifyTitle.Parent = verifyFrame
+
+local verifyText = Instance.new("TextLabel")
+verifyText.Size = UDim2.fromScale(0.85,0.2)
+verifyText.Position = UDim2.fromScale(0.075,0.30)
+verifyText.BackgroundTransparency = 1
+verifyText.Text = "Please confirm that you are human."
+verifyText.TextColor3 = Color3.fromRGB(175,175,190)
+verifyText.TextScaled = true
+verifyText.Font = Enum.Font.Gotham
+verifyText.Parent = verifyFrame
+
+local humanButton = Instance.new("TextButton")
+humanButton.Size = UDim2.fromScale(0.7,0.22)
+humanButton.Position = UDim2.fromScale(0.15,0.62)
+humanButton.BackgroundColor3 = Color3.fromRGB(110,60,220)
+humanButton.BorderSizePixel = 0
+humanButton.Text = "I'M HUMAN"
+humanButton.TextColor3 = Color3.fromRGB(255,255,255)
+humanButton.TextScaled = true
+humanButton.Font = Enum.Font.GothamBold
+humanButton.AutoButtonColor = false
+humanButton.Parent = verifyFrame
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0,10)
+buttonCorner.Parent = humanButton
+
+humanButton.MouseEnter:Connect(function()
+
+	TweenService:Create(
+		humanButton,
+		TweenInfo.new(0.2),
+		{
+			BackgroundColor3 = Color3.fromRGB(165,100,255)
+		}
+	):Play()
+
+end)
+
+humanButton.MouseLeave:Connect(function()
+
+	TweenService:Create(
+		humanButton,
+		TweenInfo.new(0.2),
+		{
+			BackgroundColor3 = Color3.fromRGB(110,60,220)
+		}
+	):Play()
+
+end)
+
+--==================================================
+-- CONTROLS FUNCTION
+--==================================================
+
+local function createControls()
+
+	local controlGui = Instance.new("ScreenGui")
+	controlGui.Name = "KnoxControls"
+	controlGui.IgnoreGuiInset = true
+	controlGui.ResetOnSpawn = false
+	controlGui.DisplayOrder = 1000
+	controlGui.Parent = player:WaitForChild("PlayerGui")
+
+	-- PANEL
+
+	local panel = Instance.new("Frame")
+	panel.Name = "ControlPanel"
+	panel.Size = UDim2.fromOffset(310,230)
+	panel.Position = UDim2.new(1,-330,0.5,-115)
+	panel.BackgroundColor3 = Color3.fromRGB(8,7,18)
+	panel.BorderSizePixel = 0
+	panel.Parent = controlGui
+
+	local panelCorner = Instance.new("UICorner")
+	panelCorner.CornerRadius = UDim.new(0,16)
+	panelCorner.Parent = panel
+
+	local panelStroke = Instance.new("UIStroke")
+	panelStroke.Color = Color3.fromRGB(105,60,230)
+	panelStroke.Thickness = 2
+	panelStroke.Parent = panel
+
+	local panelGradient = Instance.new("UIGradient")
+	panelGradient.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0,Color3.fromRGB(25,10,50)),
+		ColorSequenceKeypoint.new(0.5,Color3.fromRGB(10,15,40)),
+		ColorSequenceKeypoint.new(1,Color3.fromRGB(5,10,25))
+	})
+	panelGradient.Rotation = 45
+	panelGradient.Parent = panel
+
+	-- HEADER
+
+	local header = Instance.new("TextButton")
+	header.Size = UDim2.new(1,-55,0,45)
+	header.Position = UDim2.fromOffset(10,3)
+	header.BackgroundTransparency = 1
+	header.Text = "KNOX CONTROLS"
+	header.TextColor3 = Color3.fromRGB(220,200,255)
+	header.TextSize = 20
+	header.Font = Enum.Font.GothamBlack
+	header.TextXAlignment = Enum.TextXAlignment.Left
+	header.AutoButtonColor = false
+	header.Parent = panel
+
+	-- CLOSE
+
+	local closeButton = Instance.new("TextButton")
+	closeButton.Size = UDim2.fromOffset(30,30)
+	closeButton.Position = UDim2.new(1,-40,0,8)
+	closeButton.BackgroundColor3 = Color3.fromRGB(45,25,70)
+	closeButton.BorderSizePixel = 0
+	closeButton.Text = "×"
+	closeButton.TextColor3 = Color3.fromRGB(255,255,255)
+	closeButton.TextSize = 20
+	closeButton.Font = Enum.Font.GothamBold
+	closeButton.Parent = panel
+
+	local closeCorner = Instance.new("UICorner")
+	closeCorner.CornerRadius = UDim.new(1,0)
+	closeCorner.Parent = closeButton
+
+	-- SPEED
+
+	local speedLabel = Instance.new("TextLabel")
+	speedLabel.Size = UDim2.new(1,-30,0,28)
+	speedLabel.Position = UDim2.fromOffset(15,55)
+	speedLabel.BackgroundTransparency = 1
+	speedLabel.Text = "Speed: 16"
+	speedLabel.TextColor3 = Color3.fromRGB(210,210,230)
+	speedLabel.TextSize = 16
+	speedLabel.Font = Enum.Font.GothamBold
+	speedLabel.TextXAlignment = Enum.TextXAlignment.Left
+	speedLabel.Parent = panel
+
+	local speedBar = Instance.new("Frame")
+	speedBar.Size = UDim2.new(1,-30,0,12)
+	speedBar.Position = UDim2.fromOffset(15,88)
+	speedBar.BackgroundColor3 = Color3.fromRGB(35,30,50)
+	speedBar.BorderSizePixel = 0
+	speedBar.Active = true
+	speedBar.Parent = panel
+
+	local speedCorner = Instance.new("UICorner")
+	speedCorner.CornerRadius = UDim.new(1,0)
+	speedCorner.Parent = speedBar
+
+	local speedFill = Instance.new("Frame")
+	speedFill.Size = UDim2.fromScale(16/1000,1)
+	speedFill.BackgroundColor3 = Color3.fromRGB(130,70,255)
+	speedFill.BorderSizePixel = 0
+	speedFill.Parent = speedBar
+
+	local speedFillCorner = Instance.new("UICorner")
+	speedFillCorner.CornerRadius = UDim.new(1,0)
+	speedFillCorner.Parent = speedFill
+
+	-- JUMP
+
+	local jumpLabel = Instance.new("TextLabel")
+	jumpLabel.Size = UDim2.new(1,-30,0,28)
+	jumpLabel.Position = UDim2.fromOffset(15,120)
+	jumpLabel.BackgroundTransparency = 1
+	jumpLabel.Text = "Jump: 50"
+	jumpLabel.TextColor3 = Color3.fromRGB(210,210,230)
+	jumpLabel.TextSize = 16
+	jumpLabel.Font = Enum.Font.GothamBold
+	jumpLabel.TextXAlignment = Enum.TextXAlignment.Left
+	jumpLabel.Parent = panel
+
+	local jumpBar = Instance.new("Frame")
+	jumpBar.Size = UDim2.new(1,-30,0,12)
+	jumpBar.Position = UDim2.fromOffset(15,153)
+	jumpBar.BackgroundColor3 = Color3.fromRGB(35,30,50)
+	jumpBar.BorderSizePixel = 0
+	jumpBar.Active = true
+	jumpBar.Parent = panel
+
+	local jumpCorner = Instance.new("UICorner")
+	jumpCorner.CornerRadius = UDim.new(1,0)
+	jumpCorner.Parent = jumpBar
+
+	local jumpFill = Instance.new("Frame")
+	jumpFill.Size = UDim2.fromScale(50/150,1)
+	jumpFill.BackgroundColor3 = Color3.fromRGB(70,130,255)
+	jumpFill.BorderSizePixel = 0
+	jumpFill.Parent = jumpBar
+
+	local jumpFillCorner = Instance.new("UICorner")
+	jumpFillCorner.CornerRadius = UDim.new(1,0)
+	jumpFillCorner.Parent = jumpFill
+
+	--==================================================
+	-- SLIDERS
+	--==================================================
+
+	local function createSlider(bar,fill,minValue,maxValue,callback)
+
+		local dragging = false
+
+		local function update(x)
+
+			local relative =
+				math.clamp(
+					x - bar.AbsolutePosition.X,
+					0,
+					bar.AbsoluteSize.X
+				)
+
+			local percentValue =
+				relative / bar.AbsoluteSize.X
+
+			local value =
+				math.floor(
+					minValue +
+					(maxValue-minValue)*percentValue
+					+0.5
+				)
+
+			fill.Size = UDim2.fromScale(percentValue,1)
+
+			callback(value)
+
+		end
+
+		bar.InputBegan:Connect(function(input)
+
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch then
+
+				dragging = true
+				update(input.Position.X)
+
+			end
+
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+
+			if dragging then
+
+				if input.UserInputType == Enum.UserInputType.MouseMovement
+					or input.UserInputType == Enum.UserInputType.Touch then
+
+					update(input.Position.X)
+
+				end
+
+			end
+
+		end)
+
+		UserInputService.InputEnded:Connect(function(input)
+
+			if input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch then
+
+				dragging = false
+
+			end
+
+		end)
+
+	end
+
+	-- SPEED 1-1000
+
+	createSlider(
+		speedBar,
+		speedFill,
+		1,
+		1000,
+		function(value)
+
+			speedLabel.Text = "Speed: "..value
+
+			local character = player.Character
+
+			if character then
+
+				local humanoid =
+					character:FindFirstChildOfClass("Humanoid")
+
+				if humanoid then
+					humanoid.WalkSpeed = value
+				end
+
+			end
+
+		end
+	)
+
+	-- JUMP 1-150
+
+	createSlider(
+		jumpBar,
+		jumpFill,
+		1,
+		150,
+		function(value)
+
+			jumpLabel.Text = "Jump: "..value
+
+			local character = player.Character
+
+			if character then
+
+				local humanoid =
+					character:FindFirstChildOfClass("Humanoid")
+
+				if humanoid then
+					humanoid.UseJumpPower = true
+					humanoid.JumpPower = value
+				end
+
+			end
+
+		end
+	)
+
+	--==================================================
+	-- DRAG PANEL USING HEADER
+	--==================================================
+
+	local draggingPanel = false
+	local dragStart
+	local startPosition
+
+	header.InputBegan:Connect(function(input)
+
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+
+			draggingPanel = true
+			dragStart = input.Position
+			startPosition = panel.Position
+
+		end
+
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+
+		if draggingPanel then
+
+			if input.UserInputType == Enum.UserInputType.MouseMovement
+				or input.UserInputType == Enum.UserInputType.Touch then
+
+				local delta = input.Position - dragStart
+
+				panel.Position = UDim2.new(
+					startPosition.X.Scale,
+					startPosition.X.Offset + delta.X,
+					startPosition.Y.Scale,
+					startPosition.Y.Offset + delta.Y
+				)
+
+			end
+
+		end
+
+	end)
+
+	UserInputService.InputEnded:Connect(function(input)
+
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+
+			draggingPanel = false
+
+		end
+
+	end)
+
+	--==================================================
+	-- OPEN BUTTON
+	--==================================================
+
+	local openButton = Instance.new("TextButton")
+	openButton.Size = UDim2.fromOffset(55,55)
+	openButton.Position = UDim2.new(1,-70,0.5,-27)
+	openButton.BackgroundColor3 = Color3.fromRGB(18,8,40)
+	openButton.BorderSizePixel = 0
+	openButton.Text = "K"
+	openButton.TextColor3 = Color3.fromRGB(190,130,255)
+	openButton.TextSize = 24
+	openButton.Font = Enum.Font.GothamBlack
+	openButton.Visible = false
+	openButton.Parent = controlGui
+
+	local openCorner = Instance.new("UICorner")
+	openCorner.CornerRadius = UDim.new(1,0)
+	openCorner.Parent = openButton
+
+	local openStroke = Instance.new("UIStroke")
+	openStroke.Color = Color3.fromRGB(100,70,230)
+	openStroke.Thickness = 2
+	openStroke.Parent = openButton
+
+	--==================================================
+	-- CLOSE / OPEN
+	--==================================================
+
+	closeButton.MouseButton1Click:Connect(function()
+
+		panel.Visible = false
+		openButton.Visible = true
+
+	end)
+
+	openButton.MouseButton1Click:Connect(function()
+
+		openButton.Visible = false
+		panel.Visible = true
+
+	end)
+
+end
+
+--==================================================
+-- VERIFICATION
+--==================================================
+
+humanButton.MouseButton1Click:Connect(function()
+
+	pcall(function()
+		clickSound:Play()
+	end)
+
+	humanButton.Active = false
+	humanButton.Text = "VERIFYING..."
+
+	task.wait(1.2)
+
+	humanButton.Text = "✓ VERIFIED"
+	humanButton.BackgroundColor3 = Color3.fromRGB(70,190,120)
+
+	verifyText.Text = "Verification successful!"
+	verifyText.TextColor3 = Color3.fromRGB(100,220,150)
+
+	pcall(function()
+		verifiedSound:Play()
+	end)
+
+	task.wait(1)
+
+	local fadeInfo = TweenInfo.new(
+		0.8,
+		Enum.EasingStyle.Quad,
+		Enum.EasingDirection.Out
+	)
+
+	for _,object in ipairs(verifyFrame:GetDescendants()) do
+
+		if object:IsA("TextLabel")
+			or object:IsA("TextButton") then
+
+			TweenService:Create(
+				object,
+				fadeInfo,
+				{
+					TextTransparency = 1
+				}
+			):Play()
+
+		elseif object:IsA("UIStroke") then
+
+			TweenService:Create(
+				object,
+				fadeInfo,
+				{
+					Transparency = 1
+				}
+			):Play()
+
+		end
+	end
+
+	TweenService:Create(
+		verifyFrame,
+		fadeInfo,
+		{
+			BackgroundTransparency = 1
+		}
+	):Play()
+
+	task.wait(0.9)
+
+	gui:Destroy()
+
+	-- Create controls after loading/verification
+	createControls()
+
+end)
