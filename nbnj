@@ -22,7 +22,7 @@ local data = {
             },
             {
                 ["name"] = "Hub",
-                ["value"] = "Kairis Hub",
+                ["value"] = "Knox Hub",
                 ["inline"] = false
             },
             {
@@ -56,11 +56,11 @@ request({
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 local Window = WindUI:CreateWindow({
-    Icon = "rbxassetid://110367267857712",
+    Icon = "rbxassetid://75885959789371",
     IconThemed = true,
     Title = "Knox Hub | MM2",
     Author = "by Knoxxy",
-    Folder = "Kairis",
+    Folder = "Knox",
     Size = UDim2.fromOffset(400, 400),
     MinSize = Vector2.new(560, 350),
     MaxSize = Vector2.new(850, 560),
@@ -72,7 +72,7 @@ local Window = WindUI:CreateWindow({
     HideSearchBar = false,
     ScrollBarEnabled = false,
     OpenButton = {
-        Title = "Kairis Hub",
+        Title = "Knox Hub",
         CornerRadius = UDim.new(1, 0),
         StrokeThickness = 1,
         Enabled = true,
