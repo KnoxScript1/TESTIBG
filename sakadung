@@ -94,7 +94,7 @@ WindUI:AddTheme({
 
 WindUI:SetNotificationLower(true)
 
--- ==================== NEXORA NOTIFICATION LOADER ====================
+-- ==================== KNOX NOTIFICATION LOADER ====================
 local function LoadNexora()
     local url = "https://raw.githubusercontent.com/UniversalScripter1/ProjectNexora/refs/heads/main/Notification"
     local success, result = pcall(function()
@@ -123,7 +123,7 @@ local function ExtractAssetId(icon)
     return tonumber(id)
 end
 
-local function SendNexoraNotification(title, text, duration, icon)
+local function SendKnoxNotification(title, text, duration, icon)
     duration = duration or 5
     if notif and type(notif.Notification) == "function" then
         local iconId = ExtractAssetId(icon) or 54952350
@@ -173,13 +173,13 @@ if not getgenv().TransparencyEnabled then
     getgenv().TransparencyEnabled = false
 end
 
-SendNexoraNotification("Knox Hub", "Toggle Keybind: ( R )", 30, "rbxassetid://89804924525665")
+SendKnoxNotification("Knox Hub", "Toggle Keybind: ( R )", 30, "rbxassetid://89804924525665")
 
 local MainWindow = WindUI:CreateWindow({
     ["Title"] = "Knox Hub",
     ["Icon"] = "zap",
     ["Author"] = "OP KEYLESS",
-    ["Folder"] = "Project Nexora",
+    ["Folder"] = "Project Knox",
     ["Size"] = UDim2.fromOffset(500, 350),
     ["Transparent"] = getgenv().TransparencyEnabled,
     ["Theme"] = "Purple",
@@ -226,7 +226,7 @@ end
 loadstring(game:HttpGet("https://pastefy.app/hcVkWhQF/raw"))()
 
 MainWindow:EditOpenButton({
-    ["Title"] = "Eliana Hub",
+    ["Title"] = "Knox Hub",
     ["CornerRadius"] = UDim.new(0, 6),
     ["StrokeThickness"] = 2,
     ["Color"] = ColorSequence.new(Color3.fromRGB(30, 30, 30), Color3.fromRGB(255, 255, 255)),
