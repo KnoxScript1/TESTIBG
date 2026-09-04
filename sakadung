@@ -4349,7 +4349,7 @@ Info:Section({
 })
 
 Info:Paragraph({
-    ["Title"] = "Nexora Hub TikTok",
+    ["Title"] = "Knox Hub TikTok",
     ["Desc"] = "Follow us for the latest script updates and short showcases.",
     ["Image"] = "assetid://75885959789371",
     ["Buttons"] = {
