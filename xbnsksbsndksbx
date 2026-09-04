@@ -8,7 +8,7 @@ _SHWXLoaded = true
 _Hawk = "ohhahtuhthttouttpwuttuaunbotwo"
 
 for i, v in pairs(game.CoreGui:GetChildren()) do
-	if v.Name == "KnoxMini" or v.Name == "Knox" or v.Name == "GameNotification" or v.Name == "KnoxNotification" or v.Name == "HawkKeySystem" or v.Name == "HawkLoader" or v.Name == "Intro" or v.Name == "Load" or v.Name == "HawkAdmin" or v.Name == "amk" then
+	if v.Name == "KnoxMini" or v.Name == "Knox" or v.Name == "KnoxGameNotification" or v.Name == "KnoxNotification" or v.Name == "HawkKeySystem" or v.Name == "HawkLoader" or v.Name == "Intro" or v.Name == "Load" or v.Name == "HawkAdmin" or v.Name == "amk" then
 		v:Destroy()
 	end
 end
@@ -30,13 +30,13 @@ local Bar = Instance.new("Frame")
 local UICorner_6 = Instance.new("UICorner")
 local LoaderTexts = Instance.new("TextLabel")
 
-HawkMini.Name = "HawkMini"
+HawkMini.Name = "knoxMini"
 HawkMini.Parent = game.CoreGui
 HawkMini.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 HawkMini.ResetOnSpawn = false
 
 Main.Name = "Main"
-Main.Parent = HawkMini
+Main.Parent = KnoxMini
 Main.Active = true
 Main.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 Main.BorderColor3 = Color3.fromRGB(35, 35, 35)
@@ -54,7 +54,7 @@ Logo.BackgroundTransparency = 1.000
 Logo.BorderColor3 = Color3.fromRGB(31, 31, 31)
 Logo.Position = UDim2.new(0.385918379, 0, 0.0456755161, 0)
 Logo.Size = UDim2.new(0, 66, 0, 62)
-Logo.Image = "http://www.roblox.com/asset/?id=93569763849548"
+Logo.Image = "http://www.roblox.com/asset/?id=75885959789371"
 
 UICorner_2.CornerRadius = UDim.new(0, 5)
 UICorner_2.Parent = Logo
@@ -67,7 +67,7 @@ Glow.BackgroundTransparency = 1.000
 Glow.Position = UDim2.new(0, -15, 0, -15)
 Glow.Size = UDim2.new(1, 30, 1, 30)
 Glow.ZIndex = 0
-Glow.Image = "rbxassetid://5028857084"
+Glow.Image = "rbxassetid://75885959789371"
 Glow.ImageColor3 = Color3.fromRGB(0, 0, 0)
 Glow.ScaleType = Enum.ScaleType.Slice
 Glow.SliceCenter = Rect.new(24, 24, 276, 276)
@@ -123,7 +123,7 @@ Text_3.BorderColor3 = Color3.fromRGB(35, 35, 35)
 Text_3.Position = UDim2.new(0.162790701, 0, 0.601577878, 0)
 Text_3.Size = UDim2.new(0, 200, 0, 16)
 Text_3.Font = Enum.Font.GothamBold
-Text_3.Text = "https://dc.gg/shwxteam"
+Text_3.Text = "https://discord.gg/qhqz3zAZV"
 Text_3.TextColor3 = Color3.fromRGB(255, 255, 255)
 Text_3.TextSize = 14.000
 Text_3.TextXAlignment = Enum.TextXAlignment.Center
@@ -248,7 +248,7 @@ local Notifications = Hawk:AddNotifications()
 
 Notifications:Notification({
 	Title = "Welcome to Knox Scripts!",
-	Description = "Please Join: dc.gg/shwxteam",
+	Description = "Please Join: https://discord.gg/qhqz3zAZV",
 	Selection = "Done",
 	Animated = true,
 	Cooldown = 4
@@ -257,15 +257,15 @@ Notifications:Notification({
 
 local tab1 = Window:Tab("Home")
 
-local label = tab1:Label("Welcome To Knox!","Supported Game: Murder Mystery 2")
+local label = tab1:Label("Welcome To KNOX HUB!","Supported Game: Murder Mystery 2")
 
-local label = tab1:Label("Enjoy using Knox","Thank you for choosing Knox.")
+local label = tab1:Label("Enjoy using KNOX HUB!","Thank you for choosing KNOX HUB.")
 
-tab1:Paragraph("Update List",{"No Update Yet :("})
+tab1:Paragraph("Update List",{"SOON :("})
 
 --Creating Button
 local button = tab1:Button("Discord Server","Copy Link",function()
-	setclipboard("discord.gg/uPDMy5DpWN")
+	setclipboard("https://discord.gg/qhqz3zAZV")
 
 	Notifications:Notification({
 		Title = "Knox",
