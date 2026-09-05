@@ -1,4 +1,4 @@
-loadstring(game:HttpGet("https://api.project-reverse.org/run/eyJpZCI6ImI4NWUwNWFkLTY1MjQtNDhmYy05NDI5LTJmMTg0NDdmNTQyNiIsImtpbmQiOiJsb2FkZXIiLCJ2aXN1YWwiOnsiaWQiOiJjdXN0b20iLCJ1cmwiOiJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vS25veFNjcmlwdDEvVEVTVElCRy9yZWZzL2hlYWRzL21haW4vYW50aSJ9fQ"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/MM2/refs/heads/main/NewKnoxLoader"))()
  local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
