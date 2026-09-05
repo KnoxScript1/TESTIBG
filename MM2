@@ -1590,4 +1590,3 @@ MapTab:Toggle({
 })
 
 MapTab:GetToggle("Enable Anti AFK"):SetState(true)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/TESTIBG/refs/heads/main/Knoxhub"))()
