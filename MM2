@@ -1,5 +1,5 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/MM2/refs/heads/main/NewKnoxLoader"))()
-local HttpService = game:GetService("HttpService")
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/TESTIBG/refs/heads/main/Knoxhub"))()
+ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
