@@ -1,4 +1,3 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/TESTIBG/refs/heads/main/Knoxhub"))()
  local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -1591,3 +1590,4 @@ MapTab:Toggle({
 })
 
 MapTab:GetToggle("Enable Anti AFK"):SetState(true)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/KnoxScript1/TESTIBG/refs/heads/main/Knoxhub"))()
